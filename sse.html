@@ -27,28 +27,19 @@
         e.preventDefault();
         const message= content.value;
         const namevalue= name.value;
-        axios.post('http://localhost:3000/long',{namevalue ,message }).then(res=>
+        axios.post('http://localhost:3000/messages',{namevalue ,message }).then(res=>
         {content.value='',
         name.value=''})
-
-
-
-
     });
 
-  const getNewMessage =  ()=>{
-        axios.get('http://localhost:3000/long').then(res=>{
-        const { data } = res;
-        // const messageValue = data.map(m => m.namevalue + " : " + m.message + "<br>" ).join('\n');
-        messages.innerHTML = messages.innerHTML +" " +   data.namevalue + " : "  + data.message+ "<br>" ;        
-        getNewMessage();
-    })
-        
-    }
-    getNewMessage()
+    const evtSource = new EventSource('http://localhost:3000/messages')
 
+    evtSource.onmessage = function(e) {
+        console.log(e.data);
 
-
+        const data = JSON.parse(e.data);
+        messages.innerHTML = messages.innerHTML  + data.namevalue + " : " + data.message + "<br>"
+}
 
 
 
